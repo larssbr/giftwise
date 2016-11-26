@@ -3,7 +3,7 @@ This template gets you started with a simple dialog that echoes back what the us
 To learn more please visit
 https://docs.botframework.com/en-us/node/builder/overview/
 -----------------------------------------------------------------------------*/
-"use strict";
+//"use strict";
 var builder = require("botbuilder");
 var botbuilder_azure = require("botbuilder-azure");
 var azure = require('azure-storage');
