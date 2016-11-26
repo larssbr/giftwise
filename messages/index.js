@@ -45,13 +45,21 @@ bot.dialog('/', function (session) {
                     // Message inserted
                     session.send('Your message (\'' + session.message.text + '\') has been added to a queue, and it will be sent back to you via a Function');
                 
-                    // code here!
-                    
-   
-                  request('https://api.zalando.com/categories', function (error, response, body) {
-                   if (!error && response.statusCode == 200) {
-                      session.send(body);}
-                    })
+                    session.send("You can pass a custom message to Prompts.choice() that will present the user with a carousel of cards to select from. Each card can even support multiple actions.");
+        
+        // Ask the user to select an item from a carousel.
+        request('https://api.zalando.com/categories', function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                cats = JSON.parse(body);
+                cards = []
+                for (var i = cats["content"].length - 1; i >= 0; i--) {
+                    cards.push(new builder.HeroCard(session).title(cats["content"][i].name).text(cats["content"][i].name));
+                     var msg = new builder.Message(session)
+                                .textFormat(builder.TextFormat.xml)
+                                .attachmentLayout(builder.AttachmentLayout.carousel)
+                                .attachments(cards);
+                            builder.Prompts.choice(session, msg, "select:100|select:101|select:102");
+                }}});
                     
             
 
