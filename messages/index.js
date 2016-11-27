@@ -72,6 +72,41 @@ bot.dialog('/', [
         builder.Prompts.number(session, "Okay, what's your price range?"); 
     },
     function (session, results) {
+bot.dialog('/zalando', [
+    function (session) {
+        builder.Prompts.text(session, "Hello, what can I help you with?");
+    },
+    function (session, results) {
+
+        session.userData.initial = luis(results.response);
+        builder.Prompts.text(session, "Okay, what's your price range? [x-y€]"); 
+    },
+    function (session, results) {
+        session.userData.price = results.response;
+        //luis -> intent, entity
+        builder.Prompts.text(session, "And what size are you? [s, m, l]"); 
+    },/*
+    function (session, results) {
+        session.userData.size = results.respons;
+        //luis -> intent, entity
+        builder.Prompts.number(session, "Do you want me to show only sales?"); 
+    },
+    function (session, results) {
+        session.userData.sale = results.response;
+        //luis -> intent, entity
+        builder.Prompts.number(session, "How old are you?"); 
+    },
+    function (session, results) {
+        session.userData.ageGroup = results.response;
+        //luis -> intent, entity
+        builder.Prompts.number(session, "Are you looking for a specific brand?"); 
+    },
+    function (session, results) {
+        session.userData.name = results.response;
+        //luis -> intent, entity
+        builder.Prompts.number(session, "Okay, what's your price range?"); 
+    },
+    function (session, results) {
         session.userData.name = results.response;
         //luis -> intent, entity
         builder.Prompts.number(session, "Okay, what's your price range?"); 
@@ -88,22 +123,87 @@ bot.dialog('/', [
         console.log(session.userData.price, session.userData.size)
         var url = 'https://api.zalando.com/articles?price='+session.userData.price+'&size='+session.userData.size//+"&"+session.userData.initial[0]+'='+session.userData.initial[1]
         request(url, function (error, response, body) {
-			if (!error && response.statusCode == 200) {
-			   var cats = JSON.parse(body)
-			   var cards =[];
-			   for (var i = cats.content.length - 1; i >= 0; i--) {
-			   	cards.push(cats["content"][i].name)
-			   }
-			   
-			   builder.Prompts.choice(session, "Does any of the fit the bill?", cards);
-			     }});
+            if (!error && response.statusCode == 200) {
+                cats = JSON.parse(body);
+                cards = []
+                btns = []
+                thing = ""
+                for (var i = cats["content"].length - 1; i >= 0; i--) {
+                        //"https://api.zalando.com/articles/"+cats.content[i].id+"/media"
+                        //json = JSON.parse(body);
+                        //picURL = json.images[0].mediumUrl;
+                        cards.push(new builder.HeroCard(session).title(cats["content"][i].name).text(cats["content"][i].name)
+                        .images([
+                        builder.CardImage.create(session, cats.content[i].media.images[0].mediumUrl)
+                         .tap(builder.CardAction.showImage(session, cats.content[i].media.images[0].mediumUrl)),
+                    ])
+                        .buttons([builder.CardAction.imBack(session, "select:"+cats.content[i].id, "See similar"),
+                            builder.CardAction.openUrl(session, cats.content[i].shopUrl, "See in Shop")]))
+                    //btns.push(builder.CardAction.imBack(session, "select:"+i, "Select"));
+                    thing = thing + "select:" + cats.content[i].id + "|"
+                }
+                     var msg = new builder.Message(session)
+                                .textFormat(builder.TextFormat.xml)
+                                .attachmentLayout(builder.AttachmentLayout.carousel)
+                                .attachments(cards);
+                                //.buttons(btns);
+                            builder.Prompts.choice(session, msg, thing);
+                    
+                        
+                     
+                    
+                }});  
         
     },
     function (session, results) {
-        session.userData.language = results.response.entity;
-        session.send("Got it... " + session.userData.language + ".");
+        var action, item;
+        var kvPair = results.response.entity.split(':');
+        session.userData.id = kvPair[1];
+        session.beginDialog('/similar')
     }
 ]);
+bot.dialog('/similar',[    function (session, results) {
+        
+        console.log(session.userData.id)
+        var url = 'https://api.zalando.com/recommendations/' + session.userData.id
+        request(url, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                cats = JSON.parse(body);
+                cards = []
+                btns = []
+                thing = ""
+                for (var i = cats.length - 1; i >= 0; i--) {
+                        
+                        cards.push(new builder.HeroCard(session).title(cats[i].name).text(cats[i].name)
+                        .images([
+                        builder.CardImage.create(session, cats[i].media.images[0].mediumUrl)
+                         .tap(builder.CardAction.showImage(session, cats[i].media.images[0].mediumUrl)),
+                    ])
+                        .buttons([builder.CardAction.imBack(session, "select:"+cats[i].id, "See similar"),
+                            builder.CardAction.openUrl(session, cats[i].shopUrl, "See in Shop")]))
+                    //btns.push(builder.CardAction.imBack(session, "select:"+i, "Select"));
+                    thing = thing + "select:" + cats[i].id + "|"
+                }
+                     var msg = new builder.Message(session)
+                                .textFormat(builder.TextFormat.xml)
+                                .attachmentLayout(builder.AttachmentLayout.carousel)
+                                .attachments(cards);
+                                //.buttons(btns);
+                            builder.Prompts.choice(session, msg, thing);
+                    
+                        
+                     
+                    
+                }});  
+        
+    },
+    function (session, results) {
+        var action, item;
+        var kvPair = results.response.entity.split(':');
+        session.userData.id = kvPair[1];
+        session.beginDialog('/similar')
+    }] )
+
 // Handle message from user
 bot.dialog('/i', function (session) {
     var queuedMessage = { address: session.message.address, text: session.message.text };
