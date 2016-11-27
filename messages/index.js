@@ -39,25 +39,7 @@ var luis = function(query){
 
 bot.dialog('/', [
     function (session) {
-    //njinijnijnijnijnionioniojnijnijn
-        var queuedMessage = { address: session.message.address, text: session.message.text };
-        // add message to queue
-        session.sendTyping();
-        var queueSvc = azure.createQueueService(process.env.AzureWebJobsStorage);
-        queueSvc.createQueueIfNotExists('bot-queue', function(err, result, response){
-            if(!err){
-                // Add the message to the queue
-                var queueMessageBuffer = new Buffer(JSON.stringify(queuedMessage)).toString('base64');
-                queueSvc.createMessage('bot-queue', queueMessageBuffer, function(err, result, response) {
-                    if (!err) {
-                        // hgvioubouygbouygbpiuhgipuhpuihup
-
-
-                        builder.Prompts.text(session, "Hello, what can I help you with?");
-                    }
-                    }
-                    }
-                }
+        builder.Prompts.text(session, "Hello, what can I help you with?");
     },
     function (session, results) {
 
@@ -170,8 +152,8 @@ bot.dialog('/zalando', [
 
 
 
-                }});  
-        
+                }});
+
     },
     function (session, results) {
         var action, item;
@@ -181,7 +163,7 @@ bot.dialog('/zalando', [
     }
 ]);
 bot.dialog('/similar',[    function (session, results) {
-        
+
         console.log(session.userData.id)
         var url = 'https://api.zalando.com/recommendations/' + session.userData.id
         request(url, function (error, response, body) {
@@ -191,7 +173,7 @@ bot.dialog('/similar',[    function (session, results) {
                 btns = []
                 thing = ""
                 for (var i = cats.length - 1; i >= 0; i--) {
-                        
+
                         cards.push(new builder.HeroCard(session).title(cats[i].name).text(cats[i].name)
                         .images([
                         builder.CardImage.create(session, cats[i].media.images[0].mediumUrl)
@@ -208,12 +190,12 @@ bot.dialog('/similar',[    function (session, results) {
                                 .attachments(cards);
                                 //.buttons(btns);
                             builder.Prompts.choice(session, msg, thing);
-                    
-                        
-                     
-                    
-                }});  
-        
+
+
+
+
+                }});
+
     },
     function (session, results) {
         var action, item;
@@ -236,9 +218,9 @@ bot.dialog('/i', function (session) {
                 if(!err){
                     // Message inserted
                     session.send('Your message (\'' + session.message.text + '\') has been added to a queue, and it will be sent back to you via a Function');
-                
+
                     session.send("You can pass a custom message to Prompts.choice() that will present the user with a carousel of cards to select from. Each card can even support multiple actions.");
-        
+
         /* Ask the user to select an item from a carousel.
         request('https://api.zalando.com/categories', function (error, response, body) {
             if (!error && response.statusCode == 200) {
@@ -252,15 +234,15 @@ bot.dialog('/i', function (session) {
                                 .attachments(cards);
                             builder.Prompts.choice(session, msg, "select:100|select:101|select:102");
                 }}});*/
-                    
 
 
-            
+
+
 
 //code
-                    
-                    
-                    
+
+
+
                 } else {
                     // this should be a log for the dev, not a message to the user
                     session.send('There was an error inserting your message into queue');
