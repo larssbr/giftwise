@@ -8,10 +8,7 @@ A simple "Hello World" bot that can be run from a console window.
 
 -----------------------------------------------------------------------------*/
 
-var builder = require('../../core/');
-var stripe = require("stripe")(
-	"sk_test_4Sy9ryxAQihPYfnHlBYkIbWI"
-	);
+var builder = require('botbuilder');
 var request = require('request');
 
 var connector = new builder.ConsoleConnector().listen();
@@ -39,7 +36,9 @@ bot.dialog('/', [
         session.userData.price = results.response;
         //luis -> intent, entity
         builder.Prompts.text(session, "And what size are you? [s, m, l]"); 
-    },/*
+    },
+
+    /*
     function (session, results) {
         session.userData.size = results.respons;
         //luis -> intent, entity
@@ -71,7 +70,7 @@ bot.dialog('/', [
         builder.Prompts.number(session, "Okay, what's your price range?"); 
     },*/
 
-
+    // This function shows the "search result" from the chat questions
     function (session, results) {
         session.userData.size = results.response;
         console.log(session.userData.price, session.userData.size)
@@ -88,6 +87,8 @@ bot.dialog('/', [
 			     }});
         
     },
+    // ****************************************************************************************
+    // This function takes the number answer and says that you got the result.
     function (session, results) {
         session.userData.language = results.response.entity;
         session.send("Got it... " + session.userData.language + ".");
