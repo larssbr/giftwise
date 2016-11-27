@@ -51,17 +51,13 @@ bot.dialog('/', [
                 queueSvc.createMessage('bot-queue', queueMessageBuffer, function(err, result, response) {
                     if (!err) {
                         // hgvioubouygbouygbpiuhgipuhpuihup
+
+
                         builder.Prompts.text(session, "Hello, what can I help you with?");
-                    } else {
-                        // this should be a log for the dev, not a message to the user
-                        session.send('There was an error inserting your message into queue');
                     }
-                });
-            } else {
-                // this should be a log for the dev, not a message to the user
-                session.send('There was an error creating your queue');
-            }
-        });
+                    }
+                    }
+                }
     },
     function (session, results) {
 
@@ -72,9 +68,7 @@ bot.dialog('/', [
         session.userData.price = results.response;
         //luis -> intent, entity
         builder.Prompts.text(session, "And what size are you? [s, m, l]");
-    },
-
-/*
+    },/*
     function (session, results) {
         session.userData.size = results.respons;
         //luis -> intent, entity
@@ -187,6 +181,7 @@ bot.dialog('/zalando', [
     }
 ]);
 bot.dialog('/similar',[    function (session, results) {
+        
         console.log(session.userData.id)
         var url = 'https://api.zalando.com/recommendations/' + session.userData.id
         request(url, function (error, response, body) {
@@ -257,8 +252,15 @@ bot.dialog('/i', function (session) {
                                 .attachments(cards);
                             builder.Prompts.choice(session, msg, "select:100|select:101|select:102");
                 }}});*/
+                    
+
+
+            
 
 //code
+                    
+                    
+                    
                 } else {
                     // this should be a log for the dev, not a message to the user
                     session.send('There was an error inserting your message into queue');
