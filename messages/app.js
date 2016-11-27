@@ -24,26 +24,36 @@ var luis = function(query){
 }
 
 bot.dialog('/', [
+
     function (session) {
         builder.Prompts.text(session, "Hello, what can I help you with?");
     },
+    // Function that asks for the range of price for buying product
     function (session, results) {
 
-        session.userData.initial = luis(results.response);
+        session.userData.initial = luis(results.response); // why do we use luis here?
         builder.Prompts.text(session, "Okay, what's your price range? [x-y€]"); 
     },
+    // Fucntion that asks you for the size you want. saved in session.userData.price varible
     function (session, results) {
         session.userData.price = results.response;
         //luis -> intent, entity
         builder.Prompts.text(session, "And what size are you? [s, m, l]"); 
     },
 
-    /*
+    // Function that returns boolean value of True and False to show sales or not. saved in session.userData.sale varible
     function (session, results) {
-        session.userData.size = results.respons;
+        //ession.userData.size = results.respons;
+        session.userData.size = results.response;
         //luis -> intent, entity
-        builder.Prompts.number(session, "Do you want me to show only sales?"); 
+        //builder.Prompts.number(session, "Do you want me to show only sales?");
+        builder.Prompts.text(session, "do you want sale? [sale, nonSale]");
     },
+    // this data will then be used to do a better "search"
+
+
+
+    /*
     function (session, results) {
         session.userData.sale = results.response;
         //luis -> intent, entity
@@ -72,10 +82,13 @@ bot.dialog('/', [
 
     // This function shows the "search result" from the chat questions
     function (session, results) {
-        session.userData.size = results.response;
-        console.log(session.userData.price, session.userData.size)
+        session.userData.sale = results.response;
+        console.log(session.userData.price, session.userData.size, session.userData.sale)
         var url = 'https://api.zalando.com/articles?price='+session.userData.price+'&size='+session.userData.size//+"&"+session.userData.initial[0]+'='+session.userData.initial[1]
-        request(url, function (error, response, body) {
+
+        var urlSale = 'https://api.zalando.com/articles?price='+session.userData.price+'&size='+session.userData.size +'&sale=' + session.userData.sale //+"&"+session.userData.initial[0]+'='+session.userData.initial[1]
+
+        request(urlSale, function (error, response, body) {
 			if (!error && response.statusCode == 200) {
 			   var cats = JSON.parse(body)
 			   var cards =[];
