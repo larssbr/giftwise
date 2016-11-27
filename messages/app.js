@@ -84,7 +84,7 @@ bot.dialog('/', [
     function (session, results) {
         session.userData.sale = results.response;
         console.log(session.userData.price, session.userData.size, session.userData.sale)
-        var url = 'https://api.zalando.com/articles?price='+session.userData.price+'&size='+session.userData.size//+"&"+session.userData.initial[0]+'='+session.userData.initial[1]
+        var url = 'https://api.zalando.com/articles?price='+session.userData.price+'&size='+session.userData.size //+"&"+session.userData.initial[0]+'='+session.userData.initial[1]
 
         var urlSale = 'https://api.zalando.com/articles?price='+session.userData.price+'&size='+session.userData.size +'&sale=' + session.userData.sale //+"&"+session.userData.initial[0]+'='+session.userData.initial[1]
 
@@ -99,13 +99,13 @@ bot.dialog('/', [
                     //btns.push(builder.CardAction.imBack(session, "select:"+i, "Select"));
                     thing = thing + "select:" + i + "|"
                 }
-                     var msg = new builder.Message(session)
-                                .textFormat(builder.TextFormat.xml)
-                                .attachmentLayout(builder.AttachmentLayout.carousel)
-                                .attachments(cards);
-                                //.buttons(btns);
-                            builder.Prompts.choice(session, msg, thing);
-                }});
+                var msg = new builder.Message(session)
+                    .textFormat(builder.TextFormat.xml)
+                    .attachmentLayout(builder.AttachmentLayout.carousel)
+                    .attachments(cards);
+                //.buttons(btns);
+                builder.Prompts.choice(session, msg, thing);
+            }});
         
     },
     // ****************************************************************************************

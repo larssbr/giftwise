@@ -39,37 +39,53 @@ var luis = function(query){
 
 bot.dialog('/', [
     function (session) {
-        builder.Prompts.text(session, "Hello, what can I help you with?");
+    //njinijnijnijnijnionioniojnijnijn
+        var queuedMessage = { address: session.message.address, text: session.message.text };
+        // add message to queue
+        session.sendTyping();
+        var queueSvc = azure.createQueueService(process.env.AzureWebJobsStorage);
+        queueSvc.createQueueIfNotExists('bot-queue', function(err, result, response){
+            if(!err){
+                // Add the message to the queue
+                var queueMessageBuffer = new Buffer(JSON.stringify(queuedMessage)).toString('base64');
+                queueSvc.createMessage('bot-queue', queueMessageBuffer, function(err, result, response) {
+                    if (!err) {
+                        // hgvioubouygbouygbpiuhgipuhpuihup
+                        builder.Prompts.text(session, "Hello, what can I help you with?");
+                    }
+                    }
+                    }
+                }
     },
     function (session, results) {
 
         session.userData.initial = luis(results.response);
-        builder.Prompts.text(session, "Okay, what's your price range? [x-y€]"); 
+        builder.Prompts.text(session, "Okay, what's your price range? [x-y€]");
     },
     function (session, results) {
         session.userData.price = results.response;
         //luis -> intent, entity
-        builder.Prompts.text(session, "And what size are you? [s, m, l]"); 
+        builder.Prompts.text(session, "And what size are you? [s, m, l]");
     },/*
     function (session, results) {
         session.userData.size = results.respons;
         //luis -> intent, entity
-        builder.Prompts.number(session, "Do you want me to show only sales?"); 
+        builder.Prompts.number(session, "Do you want me to show only sales?");
     },
     function (session, results) {
         session.userData.sale = results.response;
         //luis -> intent, entity
-        builder.Prompts.number(session, "How old are you?"); 
+        builder.Prompts.number(session, "How old are you?");
     },
     function (session, results) {
         session.userData.ageGroup = results.response;
         //luis -> intent, entity
-        builder.Prompts.number(session, "Are you looking for a specific brand?"); 
+        builder.Prompts.number(session, "Are you looking for a specific brand?");
     },
     function (session, results) {
         session.userData.name = results.response;
         //luis -> intent, entity
-        builder.Prompts.number(session, "Okay, what's your price range?"); 
+        builder.Prompts.number(session, "Okay, what's your price range?");
     },
     function (session, results) {
 bot.dialog('/zalando', [
@@ -79,42 +95,42 @@ bot.dialog('/zalando', [
     function (session, results) {
 
         session.userData.initial = luis(results.response);
-        builder.Prompts.text(session, "Okay, what's your price range? [x-y€]"); 
+        builder.Prompts.text(session, "Okay, what's your price range? [x-y€]");
     },
     function (session, results) {
         session.userData.price = results.response;
         //luis -> intent, entity
-        builder.Prompts.text(session, "And what size are you? [s, m, l]"); 
+        builder.Prompts.text(session, "And what size are you? [s, m, l]");
     },/*
     function (session, results) {
         session.userData.size = results.respons;
         //luis -> intent, entity
-        builder.Prompts.number(session, "Do you want me to show only sales?"); 
+        builder.Prompts.number(session, "Do you want me to show only sales?");
     },
     function (session, results) {
         session.userData.sale = results.response;
         //luis -> intent, entity
-        builder.Prompts.number(session, "How old are you?"); 
+        builder.Prompts.number(session, "How old are you?");
     },
     function (session, results) {
         session.userData.ageGroup = results.response;
         //luis -> intent, entity
-        builder.Prompts.number(session, "Are you looking for a specific brand?"); 
+        builder.Prompts.number(session, "Are you looking for a specific brand?");
     },
     function (session, results) {
         session.userData.name = results.response;
         //luis -> intent, entity
-        builder.Prompts.number(session, "Okay, what's your price range?"); 
+        builder.Prompts.number(session, "Okay, what's your price range?");
     },
     function (session, results) {
         session.userData.name = results.response;
         //luis -> intent, entity
-        builder.Prompts.number(session, "Okay, what's your price range?"); 
+        builder.Prompts.number(session, "Okay, what's your price range?");
     },
     function (session, results) {
         session.userData.name = results.response;
         //luis -> intent, entity
-        builder.Prompts.number(session, "Okay, what's your price range?"); 
+        builder.Prompts.number(session, "Okay, what's your price range?");
     },*/
 
 
@@ -148,10 +164,10 @@ bot.dialog('/zalando', [
                                 .attachments(cards);
                                 //.buttons(btns);
                             builder.Prompts.choice(session, msg, thing);
-                    
-                        
-                     
-                    
+
+
+
+
                 }});  
         
     },
@@ -234,10 +250,6 @@ bot.dialog('/i', function (session) {
                                 .attachments(cards);
                             builder.Prompts.choice(session, msg, "select:100|select:101|select:102");
                 }}});*/
-                    
-
-
-            
 
 //code
                     
