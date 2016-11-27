@@ -88,16 +88,24 @@ bot.dialog('/', [
 
         var urlSale = 'https://api.zalando.com/articles?price='+session.userData.price+'&size='+session.userData.size +'&sale=' + session.userData.sale //+"&"+session.userData.initial[0]+'='+session.userData.initial[1]
 
-        request(urlSale, function (error, response, body) {
-			if (!error && response.statusCode == 200) {
-			   var cats = JSON.parse(body)
-			   var cards =[];
-			   for (var i = cats.content.length - 1; i >= 0; i--) {
-			   	cards.push(cats["content"][i].name)
-			   }
-			   
-			   builder.Prompts.choice(session, "Does any of the fit the bill?", cards);
-			     }});
+        request(url, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                cats = JSON.parse(body);
+                cards = []
+                btns = []
+                thing = ""
+                for (var i = cats["content"].length - 1; i >= 0; i--) {
+                    cards.push(new builder.HeroCard(session).title(cats["content"][i].name).text(cats["content"][i].name).buttons([builder.CardAction.imBack(session, "select:"+i, "Select")]))
+                    //btns.push(builder.CardAction.imBack(session, "select:"+i, "Select"));
+                    thing = thing + "select:" + i + "|"
+                }
+                     var msg = new builder.Message(session)
+                                .textFormat(builder.TextFormat.xml)
+                                .attachmentLayout(builder.AttachmentLayout.carousel)
+                                .attachments(cards);
+                                //.buttons(btns);
+                            builder.Prompts.choice(session, msg, thing);
+                }});
         
     },
     // ****************************************************************************************
